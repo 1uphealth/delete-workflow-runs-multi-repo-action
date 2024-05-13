@@ -28,7 +28,7 @@ async function run() {
     if (repositoryToRun) {
       repositoryArray = [repository];
     }
-
+    repositoryArray = repositoryArray.sort();
     for (let repository of repositoryArray) {
       // Split the input 'repository' (format {owner}/{repo}) to be {owner} and {repo}
       const splitRepository = repository.split("/");
