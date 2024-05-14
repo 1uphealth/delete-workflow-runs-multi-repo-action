@@ -51,7 +51,6 @@ async function runAnalysis() {
   `;
 
     const branchData = await fetchGraphQL(branchQuery, { organization });
-    console.log(branchData);
     return branchData.data.organization.repositories.nodes.flatMap((repo) =>
       repo.refs.nodes
         .filter(
@@ -91,6 +90,7 @@ async function runAnalysis() {
   `;
 
     const workflowData = await fetchGraphQL(workflowQuery, { organization });
+    console.log(workflowData);
     return workflowData.data.organization.repositories.nodes.flatMap((repo) =>
       repo.workflowRuns.nodes.filter(
         (run) =>
