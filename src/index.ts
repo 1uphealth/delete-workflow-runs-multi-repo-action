@@ -1,12 +1,10 @@
-const fetch = require("node-fetch");
-const core = require("@actions/core");
-const token = core.getInput("token");
-const octokit = new Octokit({
-  auth: token,
-});
+import { getInput } from "@actions/core";
+import { Octokit } from "@octokit/rest";
+
+const token = getInput("token");
 const organization = "1uphealth";
-const retain_days = Number(core.getInput("retain_days"));
-let repositoryArray = JSON.parse(core.getInput("repository_array"));
+const retain_days = Number(getInput("retain_days"));
+let repositoryArray = JSON.parse(getInput("repository_array"));
 const owner = "1uphealth";
 // async function runAnalysis() {
 //   async function fetchGraphQL(query, variables) {
@@ -72,9 +70,11 @@ const owner = "1uphealth";
 //   const filteredRuns = await filterWorkflowRuns(activeBranches);
 //   console.log(filteredRuns);
 // }
-
-async function fetchWorkflowRuns(owner, repo) {
-  const response = await octokit.request(
+const octokit = new Octokit({
+  auth: token,
+});
+async function fetchWorkflowRuns(owner: string, repo: string) {
+  let response = await octokit.request(
     `GET /repos/${owner}/${repo}/actions/runs`,
     {
       headers: {
@@ -82,12 +82,12 @@ async function fetchWorkflowRuns(owner, repo) {
       },
     }
   );
-  const data = await response.json();
+  const data = await response.data;
   console.log(data);
   return data.workflow_runs;
 }
 
-async function deleteWorkflowRun(owner, repo, runId) {
+async function deleteWorkflowRun(owner: string, repo: string, runId: string) {
   const url = `https://api.github.com/repos/${owner}/${repo}/actions/runs/${runId}`;
   const response = await fetch(url, {
     method: "DELETE",
@@ -115,7 +115,7 @@ async function processRuns() {
     );
     console.log(runs);
     const filteredRuns = runs.filter(
-      (run) => new Date(run.created_at) < thirtyDaysAgo
+      (run: any) => new Date(run.created_at) < thirtyDaysAgo
     );
 
     // Add branch filtering logic here if you have data on active branches

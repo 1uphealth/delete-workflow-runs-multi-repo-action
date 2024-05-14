@@ -4,7 +4,9 @@
   "description": "The GitHub action to delete workflow runs in a repository.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "tsc && node lib/index.js",
+    "build": "tsc && ncc build dist/index.js",
+    "testRun": "npm run build && node dist/index.js"
   },
   "engines": {
     "node": "20"
@@ -26,5 +28,8 @@
     "@octokit/rest": "^20.0.2",
     "node-fetch": "^2.6.6",
     "octokit": "^4.0.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
   }
 }
