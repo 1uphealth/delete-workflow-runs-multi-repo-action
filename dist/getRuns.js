@@ -4,7 +4,7 @@ const token = core.getInput("token");
 const organization = "1uphealth";
 const retain_days = Number(core.getInput("retain_days"));
 let repositoryArray = JSON.parse(core.getInput("repository_array"));
-
+const owner = "1uphealth";
 async function runAnalysis() {
   async function fetchGraphQL(query, variables) {
     const response = await fetch("https://api.github.com/graphql", {
