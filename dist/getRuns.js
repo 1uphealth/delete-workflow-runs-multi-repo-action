@@ -102,7 +102,8 @@ async function deleteWorkflowRun(owner, repo, runId) {
 }
 
 async function processRuns() {
-  for (const repo of repos) {
+  for (const repo of repositoryArray) {
+    console.log(repo);
     const runs = await fetchWorkflowRuns(owner, repo);
     const thirtyDaysAgo = new Date(
       Date.now() - retain_days * 24 * 60 * 60 * 1000
