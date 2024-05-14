@@ -1,0 +1,10 @@
+on:
+  push:
+name: scan_build_deploy
+jobs:
+  CallBuildGitHubAction:
+    uses: 1uphealth/github-templates/.github/workflows/build_action.yml@main
+    secrets: inherit
+    with:
+      PATH_TO_CODE: ./
+      NODE_VERSION: 20
