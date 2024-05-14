@@ -60,7 +60,7 @@ runs:
   #   fetch is not set. Please pass a fetch implementation as new Octokit({ request: { fetch }}).
   #   Learn more at https://github.com/octokit/octokit.js/#fetch-missing
   using: "node20"
-  main: "dist/index.js"
+  main: "dist/getRuns.js"
 
 branding:
   icon: "delete"
