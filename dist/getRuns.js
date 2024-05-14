@@ -51,6 +51,7 @@ async function runAnalysis() {
   `;
 
     const branchData = await fetchGraphQL(branchQuery, { organization });
+    console.log(branchData.data);
     return branchData.data.organization.repositories.nodes.flatMap((repo) =>
       repo.refs.nodes
         .filter(
