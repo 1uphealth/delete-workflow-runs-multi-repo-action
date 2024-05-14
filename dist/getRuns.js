@@ -34,7 +34,7 @@ async function runAnalysis() {
           }
           nodes {
             name
-            refs(refType: BRANCH, first: 100) {
+            refs(first: 100, refPrefix: "refs/heads/") {
               nodes {
                 name
                 target {
