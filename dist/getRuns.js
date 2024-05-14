@@ -99,10 +99,10 @@ async function filterWorkflowRuns(activeBranches) {
   );
 }
 
-async function runAnalysis() {
+export async function runAnalysis() {
   const activeBranches = await getActiveBranches();
   const filteredRuns = await filterWorkflowRuns(activeBranches);
   console.log(filteredRuns);
 }
 
-runAnalysis();
+// runAnalysis();
