@@ -79,6 +79,7 @@ async function fetchWorkflowRuns(owner, repo) {
     },
   });
   const data = await response.json();
+  console.log(data);
   return data.workflow_runs;
 }
 
