@@ -108,6 +108,7 @@ async function processRuns() {
     const thirtyDaysAgo = new Date(
       Date.now() - retain_days * 24 * 60 * 60 * 1000
     );
+    console.log(runs);
     const filteredRuns = runs.filter(
       (run) => new Date(run.created_at) < thirtyDaysAgo
     );
