@@ -1,8 +1,8 @@
-const fetch = require("node-fetch");
-const core = require("@actions/core");
-const token = core.getInput("token");
+import fetch from "node-fetch";
+import { getInput } from "@actions/core";
+const token = getInput("token");
 const organization = "1uphealth";
-const retain_days = Number(core.getInput("retain_days"));
+const retain_days = Number(getInput("retain_days"));
 
 async function fetchGraphQL(query, variables) {
   const response = await fetch("https://api.github.com/graphql", {
