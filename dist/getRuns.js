@@ -1,10 +1,11 @@
-async function runAnalysis() {
-  const fetch = require("node-fetch");
-  const core = require("@actions/core");
-  const token = core.getInput("token");
-  const organization = "1uphealth";
-  const retain_days = Number(core.getInput("retain_days"));
+const fetch = require("node-fetch");
+const core = require("@actions/core");
+const token = core.getInput("token");
+const organization = "1uphealth";
+const retain_days = Number(core.getInput("retain_days"));
+let repositoryArray = JSON.parse(core.getInput("repository_array"));
 
+async function runAnalysis() {
   async function fetchGraphQL(query, variables) {
     const response = await fetch("https://api.github.com/graphql", {
       method: "POST",
@@ -64,46 +65,61 @@ async function runAnalysis() {
     );
   }
 
-  async function filterWorkflowRuns(activeBranches) {
-    const workflowQuery = `
-    query ($organization: String!, $afterCursor: String) {
-      organization(login: $organization) {
-        repositories(first: 100, after: $afterCursor) {
-          nodes {
-            name
-            workflowRuns(first: 10) {
-              nodes {
-                id
-                workflow {
-                  name
-                }
-                createdAt
-                conclusion
-                url
-                headBranch
-              }
-            }
-          }
-        }
-      }
-    }
-  `;
-
-    const workflowData = await fetchGraphQL(workflowQuery, { organization });
-    console.log(workflowData);
-    return workflowData.data.organization.repositories.nodes.flatMap((repo) =>
-      repo.workflowRuns.nodes.filter(
-        (run) =>
-          !activeBranches.some(
-            (ab) => ab.repository === repo.name && ab.branch === run.headBranch
-          )
-      )
-    );
-  }
-
   const activeBranches = await getActiveBranches();
   const filteredRuns = await filterWorkflowRuns(activeBranches);
   console.log(filteredRuns);
 }
 
-runAnalysis();
+async function fetchWorkflowRuns(owner, repo) {
+  const url = `https://api.github.com/repos/${owner}/${repo}/actions/runs`;
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `token ${token}`,
+      Accept: "application/vnd.github.v3+json",
+    },
+  });
+  const data = await response.json();
+  return data.workflow_runs;
+}
+
+async function deleteWorkflowRun(owner, repo, runId) {
+  const url = `https://api.github.com/repos/${owner}/${repo}/actions/runs/${runId}`;
+  const response = await fetch(url, {
+    method: "DELETE",
+    headers: {
+      Authorization: `token ${token}`,
+      Accept: "application/vnd.github.v3+json",
+    },
+  });
+
+  if (response.ok) {
+    console.log(`Deleted run ${runId} from ${repo}`);
+  } else {
+    console.error(
+      `Failed to delete run ${runId} from ${repo}: ${response.statusText}`
+    );
+  }
+}
+
+async function processRuns() {
+  for (const repo of repos) {
+    const runs = await fetchWorkflowRuns(owner, repo);
+    const thirtyDaysAgo = new Date(
+      Date.now() - retain_days * 24 * 60 * 60 * 1000
+    );
+    const filteredRuns = runs.filter(
+      (run) => new Date(run.created_at) < thirtyDaysAgo
+    );
+
+    // Add branch filtering logic here if you have data on active branches
+
+    for (const run of filteredRuns) {
+      console.log(run.id);
+      //   await deleteWorkflowRun(owner, repo, run.id);
+    }
+  }
+}
+
+processRuns();
+
+// runAnalysis();
