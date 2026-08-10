@@ -56,10 +56,7 @@ inputs:
     required: false
 
 runs:
-  # with node16, I got this error:
-  #   fetch is not set. Please pass a fetch implementation as new Octokit({ request: { fetch }}).
-  #   Learn more at https://github.com/octokit/octokit.js/#fetch-missing
-  using: "node20"
+  using: "node24"
   main: "dist/index.js"
 
 branding:
